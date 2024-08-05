@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.active-li {
+  border-bottom: 3px solid #00a1ff;
+  color: #00a1ff !important;
+}
+
+.active-btn {
+  background-color: #00a1ff !important;
+  color: white;
+}
+
+.active-li-nft {
+  border-bottom: 1px solid #00a1ff;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #00a1ff;
+  margin-bottom: -1px; /* add this line to move the border down */
+  padding-bottom: 10px; /* add this line to add space below the border */
+  color: #00a1ff !important;
+}
+
+.nc-CardNFT {
+  max-width: 235px;
+  word-break: break-all;
+}
