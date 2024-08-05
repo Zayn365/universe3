@@ -210,7 +210,7 @@ const CardNFT: FC<CardNFTProps> = ({
             price={fix_price?.toString()}
             labelTextClassName="bg-white dark:bg-neutral-900"
           />
-          {wallet && wallet === currentOwner ? (
+          {wallet && wallet === currentOwner && token_id ? (
             <>
               {onSale ? (
                 <button

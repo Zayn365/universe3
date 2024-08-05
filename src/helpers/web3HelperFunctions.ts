@@ -607,7 +607,6 @@ export function useWeb3Helper() {
             nft_id: data.id,
             event: "auction",
             fromaddress: wallets,
-
             toaddress: contract.address,
             txn_hash: hash ? hash.transactionHash : "N/A",
             amount: startingPrice,
@@ -647,8 +646,7 @@ export function useWeb3Helper() {
       const d = listAuction.filter((val: any) => {
         return val.nft_id === data.id;
       })?.[0];
-      await bid.wait();
-      const hash = bid;
+      const hash = await bid.wait();
       if (d) {
         const requestBody = {
           nft_id: data.id,

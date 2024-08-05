@@ -135,7 +135,7 @@ const NftDetailPage = () => {
     const nftId = params.get("id");
     const settings = await axiosInstance
       .get(`/stake-rules`)
-      .then((r) => r.data.data.sort((a:any,b:any) => b.id - a.id)[0]);
+      .then((r) => r.data.data.sort((a: any, b: any) => b.id - a.id)[0]);
     console.log(settings, "CHECK ME STAKE");
     setStakeSettings(settings);
   };
@@ -235,7 +235,7 @@ const NftDetailPage = () => {
     };
     handleRouteChange();
   }, [router]);
-  
+
   return (
     <>
       {" "}
@@ -266,15 +266,17 @@ const NftDetailPage = () => {
                 <ul className="flex justify-start max-sm:flex-wrap text-lg">
                   <li
                     onClick={() => handleClick(0)}
-                    className={`mx-2 dark:text-white text-[#545454] text-sm font-thin hover:text-blue-500 cursor-pointer ${activeIndex === 0 ? "active-li-nft" : ""
-                      }`}
+                    className={`mx-2 dark:text-white text-[#545454] text-sm font-thin hover:text-blue-500 cursor-pointer ${
+                      activeIndex === 0 ? "active-li-nft" : ""
+                    }`}
                   >
                     Overview
                   </li>
                   <li
                     onClick={() => handleClick(1)}
-                    className={`mx-2 dark:text-white text-[#545454] text-sm font-thin hover:text-blue-500 cursor-pointer ${activeIndex === 1 ? "active-li-nft" : ""
-                      }`}
+                    className={`mx-2 dark:text-white text-[#545454] text-sm font-thin hover:text-blue-500 cursor-pointer ${
+                      activeIndex === 1 ? "active-li-nft" : ""
+                    }`}
                   >
                     Description
                   </li>
@@ -284,48 +286,48 @@ const NftDetailPage = () => {
               <div className="mt-4 mb-20 w-[35rem]">
                 {data1
                   ? data1
-                    ?.filter((val) => val.id === activeIndex)
-                    ?.map((val: any, key: any) => {
-                      if (val.list) {
-                        return (
-                          <>
-                            <ul>
-                              {val.list.map((li: any) => (
-                                <li
-                                  className="flex justify-between"
-                                  key={li.name}
-                                >
-                                  <span className="flex justify-start my-1">
-                                    <Image
-                                      src={lightDot}
-                                      className="dark:hidden flex"
-                                      width={20}
-                                      height={20}
-                                      alt="light"
-                                    />
-                                    <Image
-                                      src={darkDot}
-                                      className="dark:flex hidden"
-                                      width={20}
-                                      height={20}
-                                      alt="dark"
-                                    />
-                                    <span className="mx-1">{li.name}</span>
-                                  </span>
-                                  <span className="">{li.value}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </>
-                        );
-                      } else {
-                        return (
-                          <div className="">
-                            <span>{val.description}</span>
-                          </div>
-                        );
-                      }
-                    })
+                      ?.filter((val) => val.id === activeIndex)
+                      ?.map((val: any, key: any) => {
+                        if (val.list) {
+                          return (
+                            <>
+                              <ul>
+                                {val.list.map((li: any) => (
+                                  <li
+                                    className="flex justify-between"
+                                    key={li.name}
+                                  >
+                                    <span className="flex justify-start my-1">
+                                      <Image
+                                        src={lightDot}
+                                        className="dark:hidden flex"
+                                        width={20}
+                                        height={20}
+                                        alt="light"
+                                      />
+                                      <Image
+                                        src={darkDot}
+                                        className="dark:flex hidden"
+                                        width={20}
+                                        height={20}
+                                        alt="dark"
+                                      />
+                                      <span className="mx-1">{li.name}</span>
+                                    </span>
+                                    <span className="">{li.value}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </>
+                          );
+                        } else {
+                          return (
+                            <div className="">
+                              <span>{val.description}</span>
+                            </div>
+                          );
+                        }
+                      })
                   : ""}
               </div>
             </section>
@@ -345,11 +347,16 @@ const NftDetailPage = () => {
               </span>
               <section className="dark:bg-[#232333] bg-[#fafafa] border border-[#bdbaba] w-[80%] sm:w-full sm:max-w-[50%] lg:max-w-[100%] rounded-md mt-10">
                 <div className="w-full">
-                  {data && ((data?.status?.auction || data?.status?.sale || data?.status?.stake) && data?.secondary_owner?.buyer?.wallet === wallet) ? (
+                  {data &&
+                  (data?.status?.auction ||
+                    data?.status?.sale ||
+                    data?.status?.stake) &&
+                  data?.secondary_owner?.buyer?.wallet === wallet ? (
                     <div className="py-3 px-4  my-5 mx-4">
                       <div className="grid grid-col-1 mt-2">
                         <span className="dark:text-[#bdbaba] text-[#232333] py-3">
-                          You are the owner of the nft. You can't perform any actions !
+                          You are the owner of the nft. You can't perform any
+                          actions !
                         </span>
                       </div>
                     </div>
@@ -446,9 +453,9 @@ const NftDetailPage = () => {
                         </>
                       ) : data && data?.status ? (
                         !data.status.sale &&
-                          !data.status.stake &&
-                          !nftBuy &&
-                          !data?.secondary_owner?.buyer?.wallet ? (
+                        !data.status.stake &&
+                        !nftBuy &&
+                        !data?.secondary_owner?.buyer?.wallet ? (
                           " "
                         ) : nftBuy ? (
                           <>
@@ -457,7 +464,7 @@ const NftDetailPage = () => {
                                 loading={stakeOpen?.isStake}
                                 disabled={
                                   (nftBuy && data.status.sale) ||
-                                    data.status.auction
+                                  data.status.auction
                                     ? true
                                     : false || stakeOpen?.isStake
                                 }
@@ -480,7 +487,7 @@ const NftDetailPage = () => {
                               loading={open}
                               disabled={
                                 (data && data?.status?.stake) ||
-                                  data?.status?.auction
+                                data?.status?.auction
                                   ? true
                                   : false || (data && data?.status?.sale)
                               }
@@ -495,7 +502,7 @@ const NftDetailPage = () => {
                               loading={openAuction}
                               disabled={
                                 (data && data?.status?.stake) ||
-                                  data?.status?.sale
+                                data?.status?.sale
                                   ? true
                                   : (data && data?.status?.auction) || false
                               }
@@ -592,8 +599,9 @@ const NftDetailPage = () => {
                   <span>
                     <Image
                       src={arrowDark}
-                      className={`dark:hidden flex ${clickBid ? "rotate-180" : ""
-                        }`}
+                      className={`dark:hidden flex ${
+                        clickBid ? "rotate-180" : ""
+                      }`}
                       width={10}
                       height={10}
                       onClick={() => setBidClick((prev) => !prev)}
@@ -601,8 +609,9 @@ const NftDetailPage = () => {
                     />
                     <Image
                       src={arrowLight}
-                      className={`dark:flex hidden ${clickBid ? "rotate-180" : ""
-                        }`}
+                      className={`dark:flex hidden ${
+                        clickBid ? "rotate-180" : ""
+                      }`}
                       width={10}
                       height={10}
                       onClick={() => setBidClick((prev) => !prev)}

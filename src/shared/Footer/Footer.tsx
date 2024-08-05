@@ -29,22 +29,7 @@ const widgetMenus: WidgetFooterMenu[] = [
       // { href: "/", label: "Security" },
     ],
   },
-  {
-    id: "2",
-    title: "Resources",
-    menus: [
-      {
-        href: "#",
-        label: "What are nfts",
-      },
-      {
-        href: "#",
-        label: "What is marketplace",
-      },
-      // { href: "/", label: "Developers" },
-      // { href: "/", label: "Learn design" },
-    ],
-  },
+
   // {
   //   id: "4",
   //   title: "Community",

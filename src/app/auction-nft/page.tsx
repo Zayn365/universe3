@@ -14,6 +14,7 @@ const page = (props: Props) => {
   const [auctionNft, setAuctionNft] = useState<any[]>([]);
   const [auctionList, setAuctionList] = useState<any[]>([]);
   const [userNFt, setUserNft] = useState<any[]>([]);
+  const [isPlacingBid, setIsPlacingBid] = useState(false);
   const [activeButton, setActiveButton] = useState(null);
   const { CancelAuction, PlaceBid, ReleaseBid } = useWeb3Helper();
   const { user } = useUserContext();
@@ -43,12 +44,12 @@ const page = (props: Props) => {
       setUserNft(filter);
       setAuctionNft(auctionedNfts);
     },
-    defaultOptions: {
-      queries: {
-        retryDelay: (attemptIndex: any) =>
-          Math.min(1000 * 2 ** attemptIndex, 30000),
-      },
-    },
+    // defaultOptions: {
+    //   queries: {
+    //     retryDelay: (attemptIndex: any) =>
+    //       Math.min(1000 * 2 ** attemptIndex, 30000),
+    //   },
+    // },
   });
   const highestBid = (myId: any) => {
     return auctionList.find((value) => value?.nft_id === myId);
@@ -105,7 +106,9 @@ const page = (props: Props) => {
                             Auction Started At:
                           </span>
                           <span className="text-lg font-bold">
-                          {FormatOnlyDate(val?.open_auction?.auctionStartTime)}
+                            {FormatOnlyDate(
+                              val?.open_auction?.auctionStartTime
+                            )}
                           </span>
                         </li>
                         <li className="flex justify-between items-center py-2">
@@ -113,7 +116,7 @@ const page = (props: Props) => {
                             Auction Ends At:
                           </span>
                           <span className="text-lg font-bold">
-                          {FormatOnlyDate(val?.open_auction?.auctionEndTime)}
+                            {FormatOnlyDate(val?.open_auction?.auctionEndTime)}
                           </span>
                         </li>
                         <li className="flex justify-between items-center py-2">
@@ -161,7 +164,7 @@ const page = (props: Props) => {
                           <input
                             type="number"
                             required
-                            disabled={!user}
+                            disabled={!wallet}
                             className="w-full pl-2 py-2 border border-gray-300 rounded-md focus:outline-none dark:bg-slate-800 focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                             placeholder="Amount"
                             onChange={(e: any) => {
@@ -177,6 +180,7 @@ const page = (props: Props) => {
                         <button
                           disabled={
                             !wallet ||
+                            isPlacingBid ||
                             (auctionNft[key]?.open_auction?.startPrice >=
                               bids[val.auctionid] &&
                               auctionNft[key]?.open_auction?.reservedPrice >=
@@ -185,6 +189,7 @@ const page = (props: Props) => {
                               : false
                           }
                           onClick={() => {
+                            setIsPlacingBid(true);
                             PlaceBid(
                               val?.collection_address,
                               val?.auctionid,
@@ -193,7 +198,9 @@ const page = (props: Props) => {
                               wallet as string,
                               refetch,
                               auctionList
-                            );
+                            ).finally(() => {
+                              setIsPlacingBid(false);
+                            });
                           }}
                           className="bg-orange-500 hover:bg-orange-700 disabled:bg-slate-500 text-white font-bold py-2 px-4 rounded"
                         >
