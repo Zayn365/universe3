@@ -132,7 +132,7 @@ const SectionSliderCollections2: FC<SectionSliderCollections2Props> = ({
         isCenter
         desc=""
       >
-        Top List Collections.
+        Top List Collections
       </Heading>
 
       {/* <Nav

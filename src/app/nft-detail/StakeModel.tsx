@@ -17,6 +17,7 @@ const StakeModel: React.FC<Props> = (props: Props) => {
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [autostaking, setAutoStaking] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const wallet = Cookies.get("wallet");
   const { StakeNFT, unStakeNFT } = useWeb3Helper();
   const { user } = useUserContext();
@@ -47,6 +48,8 @@ const StakeModel: React.FC<Props> = (props: Props) => {
   const handleOk = async () => {
     try {
       setConfirmLoading(true);
+      setLoading(true); // Set loading to true when the operation starts
+      
       if (isStake) {
         const stakeBody = {
           ...stakeSettings,
@@ -57,9 +60,9 @@ const StakeModel: React.FC<Props> = (props: Props) => {
           collection_id: data?.collection_id,
           nft_id: data?.id,
         };
-
+  
         const duration = getDuration();
-
+  
         await StakeNFT(
           data?.token_id,
           data?.collection_address,
@@ -77,9 +80,10 @@ const StakeModel: React.FC<Props> = (props: Props) => {
       toast.error(`NFT ${!isStake ? "un" : ""} stake unsuccessful!"`);
     } finally {
       handleCloser();
+      setLoading(false); // Set loading to false when the operation ends
     }
   };
-
+  
   function getDuration() {
     let seconds;
 
@@ -111,10 +115,8 @@ const StakeModel: React.FC<Props> = (props: Props) => {
 
   let month: string | number = dtToday.getMonth() + 1;
   let day: string | number = dtToday.getDate();
-  // var year = dtToday.getFullYear();
   if (month < 10) month = "0" + month.toString();
   if (day < 10) day = "0" + day.toString();
-  // var maxDate = year + "-" + month + "-" + day;
   console.log(new Date().getDate(), "DAYS");
   return (
     <>
@@ -124,9 +126,13 @@ const StakeModel: React.FC<Props> = (props: Props) => {
         okText={`${!isStake ? "Unstake" : "Stake"} NFT`}
         onOk={handleOk}
         confirmLoading={confirmLoading}
-        onCancel={handleCancel}
+        onCancel={loading ? undefined : handleCancel}
+        // onCancel={handleCancel}
         okButtonProps={{
           style: { backgroundColor: "#0086c7", borderColor: "#0086c7" },
+        }}
+        cancelButtonProps={{
+          disabled: loading, // Disable cancel button when loading
         }}
       >
         {/* @ts-ignore */}
@@ -146,7 +152,7 @@ const StakeModel: React.FC<Props> = (props: Props) => {
               </h2>
               <ul>
                 <li>
-                  <b>Duration:</b> {stakeSettings?.duration} Days
+                  <b>Duration:</b> {stakeSettings?.duration} Day
                 </li>
                 <li>
                   <b>Duration End Date:</b> {getDuration()}
@@ -169,142 +175,7 @@ const StakeModel: React.FC<Props> = (props: Props) => {
             </span> */}
           </>
         ) : (
-          // <>
-          //   <div className="flex mt-4 items-center justify-start mb-4">
-          //     <p className="w-1/4 text-[16px] text-bold text-gray-700">Type:</p>
-          //     <select
-          //       required
-          //       name="type"
-          //       onChange={handleChange}
-          //       className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          //     >
-          //       <option value="">Select</option>
-          //       <option value="follow">Follow</option>
-          //       <option value="fixed">Fixed</option>
-          //       <option value="fungible">Fungible</option>
-          //     </select>
-          //   </div>
-          //   <div className="flex mt-4 items-center justify-start mb-4">
-          //     <p className="w-1/4 text-[16px] text-bold text-gray-700">
-          //       Duration:
-          //     </p>
-          //     <input
-          //       type="date" // changed from "date" to "text"
-          //       required
-          //       className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          //       placeholder="HH:mm:ss"
-          //       min={maxDate}
-          //       name="duration"
-          //       onChange={handleChange}
-          //     />
-          //   </div>
-          //   <div className="flex mt-4 items-center justify-start mb-4">
-          //     <p className="w-1/4 text-[16px] text-bold text-gray-700">
-          //       Interest Period:
-          //     </p>
-          //     <select
-          //       required
-          //       name="interestperiod"
-          //       onChange={handleChange}
-          //       className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          //     >
-          //       <option value="">Select</option>
-          //       <option value="daily">Daily</option>
-          //       <option value="weekly">Weekly</option>
-          //       <option value="monthly">Monthly</option>
-          //     </select>
-          //   </div>
-          //   <div className="flex mt-4 items-center justify-start mb-4">
-          //     <p className="w-1/4 text-[16px] text-bold text-gray-700">
-          //       Interest End Date:
-          //     </p>
-          //     <input
-          //       type="date" // changed from "date" to "text"
-          //       required
-          //       name="interestenddate"
-          //       onChange={handleChange}
-          //       className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          //       placeholder="HH:mm:ss"
-          //       min={maxDate}
-          //     />
-          //   </div>
-          //   <div className="flex mt-4 items-center justify-start mb-4">
-          //     <p className="w-1/4 text-[16px] text-bold text-gray-700">
-          //       Minimum Maturity Period:
-          //     </p>
-          //     <input
-          //       type="date" // changed from "date" to "text"
-          //       required
-          //       className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          //       placeholder="HH:mm:ss"
-          //       min={maxDate}
-          //       name="minimummaturityperiod"
-          //       onChange={handleChange}
-          //     />
-          //   </div>
-          //   <div className="flex mt-4 items-center justify-start mb-4">
-          //     <p className="w-1/4 text-[16px] text-bold text-gray-700">
-          //       Minimum Amount:
-          //     </p>
-          //     <input
-          //       type="number"
-          //       required
-          //       className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          //       placeholder="0.0001"
-          //       name="minimumamount"
-          //       onChange={handleChange}
-          //     />
-          //   </div>
-          //   <div className="flex mt-4 items-center justify-start mb-4">
-          //     <p className="w-1/4 text-[16px] text-bold text-gray-700">
-          //       Maximum Amount:
-          //     </p>
-          //     <input
-          //       type="number"
-          //       required
-          //       className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          //       placeholder="0.0001"
-          //       name="maximumamount"
-          //       onChange={handleChange}
-          //     />
-          //   </div>
-          //   <div className="flex mt-4 items-center justify-start mb-4">
-          //     <p className="w-1/4 text-[16px] text-bold text-gray-700">
-          //       Enable Auto Staking
-          //     </p>
-          //     <label className="inline-flex relative items-center cursor-pointer">
-          //       <input
-          //         name="autostaking"
-          //         onChange={(e) => {
-          //           handleChange(e);
-          //           setAutoStaking(e.target.checked);
-          //         }}
-          //         aria-checked={formData?.autostaking}
-          //         type="checkbox"
-          //         className="sr-only peer"
-          //       />
-          //       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-0 rounded-full peer dark:bg-gray-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          //     </label>
-          //   </div>
-
-          //   <span className="text-[10px] mr-2">
-          //     Auto Stacking is a feature that let's you earn stacking rewards
-          //     automatically without any manual effort.
-          //   </span>
-          //   <div className="flex mt-4 items-center justify-start mb-4">
-          //     <p className="w-1/4 text-[16px] text-bold text-gray-700">
-          //       Est. APR:
-          //     </p>
-          //     <input
-          //       type="number"
-          //       required
-          //       name="apr"
-          //       onChange={handleChange}
-          //       className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          //       placeholder="10"
-          //     />
-          //   </div>
-          // </>
+        
           <>
             <span className="text-xl mt-2 mr-2">Are you sure to unstake?</span>
           </>

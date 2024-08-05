@@ -14,6 +14,7 @@ interface Props {
 const AuctionModel: React.FC = (props: Props) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [startPrice, setStartPrice] = useState("");
+  const [loading, setLoading] = useState(false);
   const [duration, setDuration] = useState("");
   const { open, setOpen, data, refetch } = props;
   const { CreateAuction } = useWeb3Helper();
@@ -26,9 +27,13 @@ const AuctionModel: React.FC = (props: Props) => {
     // toast.success("NFT Added On Re-Sell Successfully!");
   };
   console.log(duration);
-  const handleOk = () => {
+  const handleOk =async () => {
     try {
-      CreateAuction(
+      setConfirmLoading(true); // Indicate that the confirmation button is loading
+      console.log(confirmLoading)
+      setLoading(true); // Set loading to true when the operation starts
+  
+    await  CreateAuction(
         data.collection_address,
         data.token_id,
         startPrice,
@@ -40,6 +45,9 @@ const AuctionModel: React.FC = (props: Props) => {
     } catch (e: any) {
       console.log(e);
       toast.error("NFT Not Added");
+    }finally {
+      setConfirmLoading(false); // Reset the confirmation loading state
+      setLoading(false); // Reset the general loading state
     }
   };
 
@@ -69,25 +77,22 @@ const AuctionModel: React.FC = (props: Props) => {
   var maxDate = year + "-" + month + "-" + day;
   return (
     <>
-      <Modal
-        title="Auction NFT"
-        open={open}
-        onOk={async () => {
-          handleOk();
-        }}
-        okText="Auction NFT"
-        destroyOnClose={true}
+       <Modal
+     title="Auction NFT"
+           open={open}
+        onOk={handleOk}
         confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-        // cancelButtonProps={{
-        //   disabled: confirmLoading,
-        // }}
-        okButtonProps={{
-          disabled: !duration || !startPrice,
-          style: {
-            backgroundColor: `${duration || startPrice ? "#0086c7" : "grey"}`,
-            borderColor: `${duration || startPrice ? "#0086c7" : "grey"}`,
-          },
+        okText="Auction NFT"
+                onCancel={loading ? undefined : handleCancel}
+          okButtonProps={{
+            disabled: !duration || !startPrice,
+            style: {
+              backgroundColor: `${duration && startPrice ? "#0086c7" : "grey"}`,
+              borderColor: `${duration && startPrice ? "#0086c7" : "grey"}`,
+            },
+        }}
+        cancelButtonProps={{
+          disabled: loading, // Disable cancel button when loading
         }}
       >
         {/* @ts-ignore */}
@@ -114,7 +119,9 @@ const AuctionModel: React.FC = (props: Props) => {
               const value = e.target.value;
               if (!isNaN(value) && parseFloat(value) >= 0) {
                 setStartPrice(value);
+                return;
               }
+              setStartPrice("")
             }}
             onInput={(e: any) => {
               // Remove invalid characters

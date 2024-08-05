@@ -42,7 +42,7 @@ function NFTGallery() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {nfts.slice(0, 4).map((nft, idx) => {
           return nft ? (
-            <div className="dark:bg-gray-800 cursor-pointer rounded-lg shadow-2xl p-4 m-4">
+            <div className="dark:bg-gray-800  rounded-lg shadow-2xl p-4 m-4">
               <img
                 src={nft.img}
                 alt="NFT IMG"

@@ -15,13 +15,12 @@ interface Props {
 const ResellModal = (props: Props) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [price, setPrice] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const { open, setOpen, data, refetch } = props;
   const { ReSellNft } = useWeb3Helper();
   const router = useRouter();
-  //   const showModal = () => {
-  //     setOpen(true);
-  //   };
-  //   console.log(data);
+
   const handleCloser = () => {
     setConfirmLoading(true);
     setTimeout(() => {
@@ -34,9 +33,12 @@ const ResellModal = (props: Props) => {
   const RouterFunction = () => {
     router.push("/marketplace?category=all");
   };
+ 
   const handleOk = async () => {
-    setConfirmLoading(true);
     try {
+      setConfirmLoading(true); // Indicate that the confirmation button is loading
+      setLoading(true); // Set loading to true when the operation starts
+  
       await ReSellNft(
         Number(price),
         data.token_id,
@@ -45,16 +47,17 @@ const ResellModal = (props: Props) => {
         handleCloser,
         refetch,
         RouterFunction
-      ).then(() => {
-        setConfirmLoading(false);
-      });
+      );
+  
     } catch (e: any) {
       console.log(e);
       toast.error("NFT Not Added");
     } finally {
-      // setConfirmLoading(false);
+      setConfirmLoading(false); // Reset the confirmation loading state
+      setLoading(false); // Reset the general loading state
     }
   };
+  
 
   const handleCancel = () => {
     console.log("Clicked cancel button");
@@ -69,13 +72,16 @@ const ResellModal = (props: Props) => {
         onOk={handleOk}
         confirmLoading={confirmLoading}
         okText="ReSell NFT"
-        onCancel={handleCancel}
-        okButtonProps={{
+        onCancel={loading ? undefined : handleCancel}
+          okButtonProps={{
           disabled: !price,
           style: {
             backgroundColor: `${price ? "#0086c7" : "grey"}`,
             borderColor: `${price ? "#0086c7" : "grey"}`,
           },
+        }}
+        cancelButtonProps={{
+          disabled: loading, // Disable cancel button when loading
         }}
       >
         {/* @ts-ignore */}
