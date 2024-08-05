@@ -90,9 +90,9 @@ export default function AvatarDropdown() {
             </div>
             {/* </Menu.Item> */}
 
-            <Menu.Item>
-              <div className="w-full mt-4 border-b border-neutral-200 dark:border-neutral-700" />
-            </Menu.Item>
+            {/* <Menu.Item> */}
+              {/* <div className="w-full mt-4 border-b border-neutral-200 dark:border-neutral-700" /> */}
+            {/* </Menu.Item> */}
 
             {/* <Menu.Item>
               {({ active }) => (
