@@ -13,7 +13,7 @@ const page = () => {
   const userId = Cookies.get("userId");
   const load = true;
   const { types, user } = useUserContext();
-  const [nft, setNft] = useState<NftType[]>([]);
+  const [nfts, setNft] = useState<NftType[]>([]);
   const [row, setRows] = useState<number | null>(null);
   const wallet = user?.wallet;
   const token = Cookies.get("loginToken");
@@ -38,6 +38,40 @@ const page = () => {
     cacheTime: Infinity,
   });
 
+  const filteredNFTs = nfts
+    .filter((nft) => {
+      switch (types.type) {
+        case "sale":
+          return (
+            nft.secondary_owner?.buyer?.wallet === wallet &&
+            nft.primary_owner !== wallet
+          );
+        case "auction":
+          return nft.status.auction === types.status;
+        case "stake":
+          return nft.status.stake === types.status;
+        default:
+          return true;
+      }
+    })
+    .map((nft, index) => (
+      <CardNFT
+        key={nft?.id}
+        id={nft?.id}
+        img={nft && nft?.img ? nft?.img : ""}
+        name={nft?.name}
+        fix_price={nft?.fix_price ? nft?.fix_price?.price : ""}
+        currentOwner={nft?.secondary_owner?.buyer?.wallet}
+        onSale={nft?.status?.sale}
+        onAuction={nft?.status?.auction}
+        onStake={nft?.status?.stake}
+        token_id={nft?.token_id}
+        collection_address={nft?.collection_address}
+        data={nft}
+        isProfile={true}
+      />
+    ));
+
   return (
     <>
       {" "}
@@ -56,113 +90,7 @@ const page = () => {
           ) : (
             <>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-10  mt-8 lg:mt-10">
-                {nft && nft
-                  ? nft.map((nft, index) => {
-                      switch (types.type) {
-                        case "sale":
-                          if (
-                            nft.secondary_owner?.buyer?.wallet === wallet &&
-                            nft.primary_owner !== wallet
-                          ) {
-                            return (
-                              <CardNFT
-                                key={nft?.id}
-                                id={nft?.id}
-                                img={nft && nft?.img ? nft?.img : ""}
-                                name={nft?.name}
-                                fix_price={
-                                  nft?.fix_price ? nft?.fix_price?.price : ""
-                                }
-                                currentOwner={
-                                  nft?.secondary_owner?.buyer?.wallet
-                                }
-                                onSale={nft?.status?.sale}
-                                onAuction={nft?.status?.auction}
-                                onStake={nft?.status?.stake}
-                                token_id={nft?.token_id}
-                                collection_address={nft?.collection_address}
-                                data={nft}
-                                isProfile={true}
-                              />
-                            );
-                          } else {
-                            return null;
-                          }
-                        case "auction":
-                          if (nft.status.auction === types.status) {
-                            return (
-                              <CardNFT
-                                key={nft?.id}
-                                id={nft?.id}
-                                img={nft && nft?.img ? nft?.img : ""}
-                                name={nft?.name}
-                                fix_price={
-                                  nft?.fix_price ? nft?.fix_price?.price : ""
-                                }
-                                currentOwner={
-                                  nft?.secondary_owner?.buyer?.wallet
-                                }
-                                onSale={nft?.status?.sale}
-                                onAuction={nft?.status?.auction}
-                                onStake={nft?.status?.stake}
-                                token_id={nft?.token_id}
-                                collection_address={nft?.collection_address}
-                                data={nft}
-                                isProfile={true}
-                              />
-                            );
-                          } else {
-                            return null;
-                          }
-                        case "stake":
-                          if (nft.status.stake === types.status) {
-                            return (
-                              <CardNFT
-                                key={nft?.id}
-                                id={nft?.id}
-                                img={nft && nft?.img ? nft?.img : ""}
-                                name={nft?.name}
-                                fix_price={
-                                  nft?.fix_price ? nft?.fix_price?.price : ""
-                                }
-                                currentOwner={
-                                  nft?.secondary_owner?.buyer?.wallet
-                                }
-                                onSale={nft?.status?.sale}
-                                onAuction={nft?.status?.auction}
-                                onStake={nft?.status?.stake}
-                                token_id={nft?.token_id}
-                                collection_address={nft?.collection_address}
-                                data={nft}
-                                isProfile={true}
-                              />
-                            );
-                          } else {
-                            return null;
-                          }
-                        default:
-                          return (
-                            <CardNFT
-                              key={nft?.id}
-                              id={nft?.id}
-                              img={nft && nft?.img ? nft?.img : ""}
-                              name={nft?.name}
-                              fix_price={
-                                nft?.fix_price ? nft?.fix_price?.price : ""
-                              }
-                              currentOwner={nft?.secondary_owner?.buyer?.wallet}
-                              onSale={nft?.status?.sale}
-                              onAuction={nft?.status?.auction}
-                              onStake={nft?.status?.stake}
-                              token_id={nft?.token_id}
-                              collection_address={nft?.collection_address}
-                              data={nft}
-                              isProfile={true}
-                            />
-                          );
-                      }
-                    })
-                  : "NO NFTS"}
+                {filteredNFTs.length > 0 ? filteredNFTs : "NO NFTS"}
               </div>
               <div className="flex flex-col mt-12 lg:mt-16 space-y-5 sm:space-y-0 sm:space-x-3 sm:flex-row sm:justify-between sm:items-center">
                 {/* <Pagination />

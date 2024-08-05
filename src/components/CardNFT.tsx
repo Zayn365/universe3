@@ -135,7 +135,7 @@ const CardNFT: FC<CardNFTProps> = ({
             }}
           >
             <Image
-              className={`object-cover w-full cursor-pointer h-full min-h-[260px] !relative group-hover:scale-[1.03] transition-transform duration-300 ease-in-out will-change-transform ${imageClass}`}
+              className={`object-cover w-full min-w-[260px] cursor-pointer h-full min-h-[260px] !relative group-hover:scale-[1.03] transition-transform duration-300 ease-in-out will-change-transform ${imageClass}`}
               src={!img ? nftsImgs[0] : img}
               alt="NFT Image"
               fill
@@ -210,9 +210,25 @@ const CardNFT: FC<CardNFTProps> = ({
             price={fix_price?.toString()}
             labelTextClassName="bg-white dark:bg-neutral-900"
           />
-          {wallet && wallet === currentOwner && token_id ? (
+          {wallet && wallet === currentOwner ? (
             <>
-              {onSale ? (
+              {!token_id ? (
+                <Link
+                  href={{
+                    pathname: "/nft-detail",
+                    query: {
+                      id: id,
+                      onSale: false,
+                      mint: true,
+                    },
+                  }}
+                >
+                  <Badge
+                    name="Mint Nft"
+                    className="bg-opacity-0 border border-green-500 text-green-500"
+                  />
+                </Link>
+              ) : onSale ? (
                 <button
                   onClick={handleRemoveFromSale}
                   className="border-2 border-green-500 text-xs hover:text-white hover:bg-green-600 text-green-500 py-2 px-4 rounded"

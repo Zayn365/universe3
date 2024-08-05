@@ -9,7 +9,8 @@ const Pagination = ({ filteredNfts }: any) => {
   // Filter data to only include items with sale, stake, or auction status
   const filteredData = filteredNfts?.filter(
     (item: any) =>
-      item.status?.sale || item.status?.stake || item.status?.auction
+      item?.listingid &&
+      (item.status?.sale || item.status?.stake || item.status?.auction)
   );
 
   // Update currentPage and reset to 1 if filteredData changes
@@ -35,11 +36,11 @@ const Pagination = ({ filteredNfts }: any) => {
       filteredData.filter((val: any) => val.status.stake === false).length /
         itemsPerPage
     );
-
+  console.log(filteredData?.length, "CHECK YO");
   return (
     <div>
       <div className="flex flex-wrap md:gap-x-14 gap-x-10 lg:gap-x-16 gap-y-4 mt-8 lg:mt-10">
-        {filteredData.length > 0 ? (
+        {filteredData.length >= 0 ? (
           filteredData
             .filter((val: any) => val.status.stake === false)
             .slice(startIndex, endIndex)
@@ -68,11 +69,9 @@ const Pagination = ({ filteredNfts }: any) => {
               />
             ))
         ) : (
-          <div className="max-w-3xl">
-            <span className="block mt-3 text-neutral-500 dark:text-neutral-400">
-              No Data Found According To Your Search.
-            </span>
-          </div>
+          <span className="block mt-3 text-neutral-500 dark:text-neutral-400">
+            No Data Found According To Your Search
+          </span>
         )}
       </div>
 

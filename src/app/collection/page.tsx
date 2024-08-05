@@ -1,5 +1,5 @@
 "use client";
-import NcImage from "@/shared/NcImage/NcImage";
+import NcImage from "@/shared/NcImageSmall/NcImage";
 import collectionBanner from "@/images/nfts/collectionBanner.png";
 import { nftsImgs } from "@/contains/fakeData";
 import { useState } from "react";
