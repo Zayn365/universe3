@@ -22,6 +22,7 @@ import SellModal from "./SellModal";
 import AuctionModel from "./AuctionModel";
 import StakeModel from "./StakeModel";
 import axiosInstance from "@/api/axiosInstance";
+import { FormatDateTime } from "@/components/formatDataTime";
 
 const columns = [
   {
@@ -234,6 +235,7 @@ const NftDetailPage = () => {
     };
     handleRouteChange();
   }, [router]);
+  
   return (
     <>
       {" "}
@@ -716,7 +718,8 @@ const NftDetailPage = () => {
                           {item.amount}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {item.created_at}
+                          {/* {item.created_at} */}
+                          {FormatDateTime(item.created_at)}
                         </td>
                       </tr>
                     ))
