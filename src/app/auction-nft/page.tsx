@@ -1,4 +1,5 @@
 "use client";
+import { FormatDateTime, FormatOnlyDate } from "@/components/formatDataTime";
 import { useWeb3Helper } from "@/helpers/web3HelperFunctions";
 import { useUserContext } from "@/hooks/useUserContext";
 import { useQuery } from "@tanstack/react-query";
@@ -31,7 +32,6 @@ const page = (props: Props) => {
         (val: any) => val?.status.auction === true
       );
       const userNFt = await axios.get(`${apiUrl}/nfts/getAll`);
-      //   console.log(userNFt.data.data);
       const filter = userNFt.data.data.filter((val: any) => {
         if (
           val.secondary_owner?.buyer?.wallet === wallet &&
@@ -102,7 +102,7 @@ const page = (props: Props) => {
                             Auction Started At:
                           </span>
                           <span className="text-lg font-bold">
-                            {val?.open_auction?.auctionStartTime}
+                          {FormatOnlyDate(val?.open_auction?.auctionStartTime)}
                           </span>
                         </li>
                         <li className="flex justify-between items-center py-2">
@@ -110,7 +110,7 @@ const page = (props: Props) => {
                             Auction Ends At:
                           </span>
                           <span className="text-lg font-bold">
-                            {val?.open_auction?.auctionEndTime}
+                          {FormatOnlyDate(val?.open_auction?.auctionEndTime)}
                           </span>
                         </li>
                         <li className="flex justify-between items-center py-2">
@@ -151,11 +151,12 @@ const page = (props: Props) => {
                             type="number" // changed from "date" to "text"
                             required
                             disabled={!user}
-                            className="w-full pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                            className="w-full pl-2 py-2 border border-gray-300 rounded-md focus:outline-none dark:bg-slate-800 focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                             placeholder="Amount"
                             onChange={(e: any) => {
                               setBid(e.target.value.toString());
                             }}
+                            // style={{color: "black"}}
                           />
                         </div>
                         <button
