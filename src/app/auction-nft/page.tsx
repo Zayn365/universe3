@@ -16,10 +16,10 @@ const page = (props: Props) => {
   const [activeButton, setActiveButton] = useState(null);
   const { CancelAuction, PlaceBid, ReleaseBid } = useWeb3Helper();
   const { user } = useUserContext();
-  const [bid, setBid] = useState<string>("");
+  const [bids, setBids] = useState([]);
   const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL;
   const wallet = Cookies.get("wallet");
-
+  console.log(bids, "YO");
   const { isLoading, refetch } = useQuery({
     // @ts-ignore
     queryKey: ["auctionNft"],
@@ -50,6 +50,9 @@ const page = (props: Props) => {
       },
     },
   });
+  const highestBid = (myId: any) => {
+    return auctionList.find((value) => value?.nft_id === myId);
+  };
   return (
     <div className="min-h-screen">
       <header className="my-12 sm:lg:my-16 lg:my-24 max-w-5xl mx-auto space-y-8 sm:space-y-10">
@@ -139,32 +142,52 @@ const page = (props: Props) => {
                             {val?.open_auction?.startPrice} MATIC
                           </span>
                         </li>
+                        <li className="flex justify-between items-center py-2">
+                          <span className="text-gray-600 dark:text-gray-400">
+                            {" "}
+                            Highest Bid Price:
+                          </span>
+                          <span className="text-lg font-bold">
+                            {highestBid(val.id)
+                              ? highestBid(val.id)?.current_price + " MATIC"
+                              : "Not Placed Yet"}
+                          </span>
+                        </li>
                       </ul>
                     </div>
                     <div className="flex justify-between items-center">
                       <div className="flex mt-4 w-full items-center justify-center mb-4">
                         <div className="flex justify-around items-center px-2">
-                          {/* <p className="w-1/4 text-[16px] text-bold text-gray-700 dark:text-gray-400">
-                              Bid:
-                            </p> */}
                           <input
-                            type="number" // changed from "date" to "text"
+                            type="number"
                             required
                             disabled={!user}
                             className="w-full pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                             placeholder="Amount"
                             onChange={(e: any) => {
-                              setBid(e.target.value.toString());
+                              const itemId = val.auctionid; // or use a unique ID for each item
+                              setBids((prevBids: any) => ({
+                                ...prevBids,
+                                [itemId]: e.target.value.toString(),
+                              }));
                             }}
                           />
                         </div>
                         <button
-                          disabled={!wallet ? true : false}
+                          disabled={
+                            !wallet ||
+                            (auctionNft[key]?.open_auction?.startPrice >=
+                              bids[val.auctionid] &&
+                              auctionNft[key]?.open_auction?.reservedPrice >=
+                                bids[val.auctionid])
+                              ? true
+                              : false
+                          }
                           onClick={() => {
                             PlaceBid(
                               val?.collection_address,
                               val?.auctionid,
-                              bid,
+                              bids[val.auctionid],
                               val,
                               wallet as string,
                               refetch,
@@ -176,11 +199,18 @@ const page = (props: Props) => {
                           Place Bid
                         </button>
                       </div>
-
-                      {/* <span className="text-lg font-bold">
-                        
-                      </span> */}
                     </div>
+                    <span className="text-[8px] text-red-500">
+                      {bids[val.auctionid] &&
+                        bids[val.auctionid] !== "" &&
+                        (auctionNft[key]?.open_auction?.reservedPrice >=
+                        bids[val.auctionid]
+                          ? "Bid is less than Reserved Price"
+                          : auctionNft[key]?.open_auction?.startPrice >=
+                            bids[val.auctionid]
+                          ? "Bid is less than Highest Price"
+                          : "")}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -250,6 +280,7 @@ const page = (props: Props) => {
                             {val?.current_price} MATIC
                           </span>
                         </li>
+
                         {user && wallet && data ? (
                           <>
                             <li className="flex justify-between items-center py-2">
