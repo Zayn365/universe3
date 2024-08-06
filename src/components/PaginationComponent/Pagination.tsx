@@ -35,7 +35,7 @@ const Pagination = ({ filteredNfts }: any) => {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-4 mt-8 lg:mt-10">
+      <div className="flex flex-wrap md:gap-x-14 gap-x-10 lg:gap-x-16 gap-y-4 mt-8 lg:mt-10">
         {filteredData.length > 0 ? (
           filteredData
             .slice(startIndex, endIndex)
@@ -65,7 +65,7 @@ const Pagination = ({ filteredNfts }: any) => {
         ) : (
           <div className="max-w-3xl">
             <span className="block mt-3 text-neutral-500 dark:text-neutral-400">
-              No Data Found According To Your Search.
+              No Data Found!
             </span>
           </div>
         )}

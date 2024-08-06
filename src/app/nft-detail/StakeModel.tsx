@@ -1,5 +1,6 @@
 import { nftsImgs } from "@/contains/fakeData";
 import { useWeb3Helper } from "@/helpers/web3HelperFunctions";
+import { useThemeMode } from "@/hooks/useThemeMode";
 import { useUserContext } from "@/hooks/useUserContext";
 import { Modal } from "antd";
 import Cookies from "js-cookie";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 const StakeModel: React.FC<Props> = (props: Props) => {
+  const {isDarkMode} = useThemeMode()
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [autostaking, setAutoStaking] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -118,52 +120,53 @@ const StakeModel: React.FC<Props> = (props: Props) => {
   if (month < 10) month = "0" + month.toString();
   if (day < 10) day = "0" + day.toString();
   console.log(new Date().getDate(), "DAYS");
+  const titleText = `${!isStake ? "Unstake" : "Stake"} NFT`;
   return (
     <>
       <Modal
-        title={`${!isStake ? "Unstake" : "Stake"} NFT`}
+        title={<span style={{ color: isDarkMode ? "white" :"#111827" }}>{titleText}</span>}
         open={!!open}
         okText={`${!isStake ? "Unstake" : "Stake"} NFT`}
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={loading ? undefined : handleCancel}
-        // onCancel={handleCancel}
         okButtonProps={{
           style: { backgroundColor: "#0086c7", borderColor: "#0086c7" },
         }}
         cancelButtonProps={{
-          disabled: loading, // Disable cancel button when loading
+          disabled: loading,
+          style: { color: isDarkMode ? "gray" : "#111827", }
         }}
-      >
-        {/* @ts-ignore */}
+        closeIcon={false}
+        styles={{footer: { backgroundColor: isDarkMode ? "#111827" :"white" },header:{ backgroundColor: isDarkMode ? "#111827" :"white" },content:{ backgroundColor: isDarkMode ? "#111827" :"white"}}}>
         <Image
-          //     @ts-ignore
+          // @ts-ignore
           src={data ? data?.img : nftsImgs[0]}
-          width={250}
-          className="rounded-md w-full h-auto"
-          height={250}
+          width={500}
+          className="rounded-md   !max-h-[300px] !min-h-[300px] object-cover object-center"
+          height={500}
           alt="nftIMAGE"
         />
         {isStake ? (
           <>
             <div className="flex flex-col mt-4 mb-4">
-              <h2 className="text-lg font-bold text-gray-700">
+              <h2 className="text-lg font-bold dark:text-white text-gray-700">
                 Staking Settings
               </h2>
               <ul>
-                <li>
+                <li className="dark:text-white text-gray-700">
                   <b>Duration:</b> {stakeSettings?.duration} Day
                 </li>
-                <li>
+                <li className="dark:text-white text-gray-700">
                   <b>Duration End Date:</b> {getDuration()}
                 </li>
-                <li>
+                <li className="dark:text-white text-gray-700">
                   <b>Type:</b> {stakeSettings?.type}
                 </li>
-                <li>
+                <li className="dark:text-white text-gray-700">
                   <b>Rate:</b> {stakeSettings?.apr}
                 </li>
-                <li>
+                <li className="dark:text-white text-gray-700">
                   <b>Amount:</b> {stakeSettings?.maximumamount}
                 </li>
               </ul>

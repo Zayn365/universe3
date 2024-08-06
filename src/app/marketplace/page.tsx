@@ -12,10 +12,17 @@ import lightFilter from "../../images/lightIcons/filter.svg";
 import darkFilter from "../../images/darkIcons/filter.svg";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import Pagination from "./Pagination";
+import Pagination from "../../components/PaginationComponent/Pagination";
+import { debounce } from "lodash";
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASEURL;
 
 const NftForSalePage = ({}) => {
+  const debouncedFunction = debounce(
+    (value: string, setSearch: React.Dispatch<React.SetStateAction<string>>) => {
+      setSearch(value.trim());
+    },
+    300
+  );
   const [currentIndex, setCurrentIndex] = useState(4);
   const nextHandle = () => {
     setCurrentIndex(currentIndex + 4);
@@ -30,6 +37,7 @@ const NftForSalePage = ({}) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFilter, setIsFilter] = useState(false);
   const searchParams = useSearchParams().get;
+  const [search, setSearch] = useState("");
   const [prices, setPrices] = useState({
     min: "",
     max: "",
@@ -38,7 +46,10 @@ const NftForSalePage = ({}) => {
   const router = useRouter();
   const min = searchParams("min");
   const max = searchParams("max");
-
+  const handleChange = (e: any) => {
+    const value = e.target.value.trim();
+    debouncedFunction(value, setSearch);
+  };
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsFilter(!!window.location.search);
@@ -134,7 +145,10 @@ const NftForSalePage = ({}) => {
           ? parseFloat(n?.open_auction?.price?.toString()) < parseFloat(max) ||
             n?.fix_price?.price?.toString() < parseFloat(max)
           : true) &&
-        (isTypeFilter ? n.status[type] : true)
+        (isTypeFilter ? n.status[type] : true) && 
+        (search.length
+          ? n.name.toLowerCase().includes(search.toLowerCase())
+          : true)
       : true && n?.status?.sale
   );
 
@@ -205,7 +219,7 @@ const NftForSalePage = ({}) => {
                     isFilterOpen ? "" : "dark:hover:bg-[#34344D]"
                   } rounded-md dark:bg-gray-800 dark:text-white text-[#545454] text-[10px] md:text-xl ${
                     isFilterOpen
-                      ? "dark:!bg-blue-500 !text-white !bg-blue-400"
+                      ? "!text-white !bg-blue-500"
                       : ""
                   }`}
                   onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -253,6 +267,7 @@ const NftForSalePage = ({}) => {
                 </button>
               </div>
               <div className="py-2 mx-6 w-full max-w-full">
+              <div className="flex justify-between items-center">
                 <ul className="flex justify-start text-lg">
                   <li
                     onClick={() => handleCategory("all")}
@@ -295,6 +310,25 @@ const NftForSalePage = ({}) => {
                     Fashion
                   </li>
                 </ul>
+                <div className="search flex items-center">
+                    <input
+                      type="text"
+                      onChange={handleChange}
+                      className="flex-1 border-0 dark:border-none bg-transparent outline-none"
+                      placeholder="Search"
+                    />
+                    <div className="dark:invert-[0.7]">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 25 25"
+                        width="20px"
+                        height="20px"
+                      >
+                        <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z" />
+                      </svg>
+                    </div>
+                  </div>
+                  </div>
                 <hr className="mt-4" />
               </div>
             </div>

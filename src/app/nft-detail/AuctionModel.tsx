@@ -4,6 +4,7 @@ import Image from "next/image";
 import { nftsImgs } from "@/contains/fakeData";
 import { useWeb3Helper } from "@/helpers/web3HelperFunctions";
 import { toast } from "sonner";
+import { useThemeMode } from "@/hooks/useThemeMode";
 interface Props {
   open?: boolean;
   setOpen?: Dispatch<SetStateAction<boolean>>;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const AuctionModel: React.FC = (props: Props) => {
+  const {isDarkMode} = useThemeMode()
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [startPrice, setStartPrice] = useState("");
   const [loading, setLoading] = useState(false);
@@ -78,10 +80,11 @@ const AuctionModel: React.FC = (props: Props) => {
   return (
     <>
        <Modal
-     title="Auction NFT"
-           open={open}
+        title={<span style={{ color: isDarkMode ? "white" :"#111827" }}>Auction NFT</span>}
+        open={open}
         onOk={handleOk}
         confirmLoading={confirmLoading}
+        destroyOnClose={true}
         okText="Auction NFT"
                 onCancel={loading ? undefined : handleCancel}
           okButtonProps={{
@@ -89,18 +92,23 @@ const AuctionModel: React.FC = (props: Props) => {
             style: {
               backgroundColor: `${duration && startPrice ? "#0086c7" : "grey"}`,
               borderColor: `${duration && startPrice ? "#0086c7" : "grey"}`,
+              color: `${duration && startPrice  ? "white" : "#bbb"}`,
             },
+            
         }}
         cancelButtonProps={{
-          disabled: loading, // Disable cancel button when loading
+          disabled: loading,
+          style: { color: isDarkMode ? "gray" : "#111827", }
         }}
-      >
+        closeIcon={false}
+        styles={{footer: { backgroundColor: isDarkMode ? "#111827" :"white" },header:{ backgroundColor: isDarkMode ? "#111827" :"white" },content:{ backgroundColor: isDarkMode ? "#111827" :"white"}}}>
+
         {/* @ts-ignore */}
         <Image
           //     @ts-ignore
           src={data ? data?.img : nftsImgs[0]}
           width={500}
-          className="rounded-md"
+          className="rounded-md  !max-h-[300px] !min-h-[300px] object-cover object-center"
           height={500}
           alt="nftIMAGE"
         />
@@ -111,20 +119,18 @@ const AuctionModel: React.FC = (props: Props) => {
           <input
             type="number"
             required
-            className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            className="w-3/4 pl-2 py-2 border border-gray-300 dark:text-white dark:bg-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
             placeholder="0.0001"
             min={0}
             onChange={(e: any) => {
-              // Update state with valid input
               const value = e.target.value;
-              if (!isNaN(value) && parseFloat(value) >= 0) {
+              if (!isNaN(value) && parseFloat(value) > 0) {
                 setStartPrice(value);
                 return;
               }
               setStartPrice("")
             }}
             onInput={(e: any) => {
-              // Remove invalid characters
               const input = e.target;
               input.value = input.value.replace(/[^0-9.]/g, ""); // Allow only numbers and decimal points
             }}
@@ -133,9 +139,9 @@ const AuctionModel: React.FC = (props: Props) => {
         <div className="flex mt-4 items-center justify-start mb-4">
           <p className="w-1/4 text-[16px] text-bold text-gray-700">Duration:</p>
           <input
-            type="date" // changed from "date" to "text"
+            type="date" 
             required
-            className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            className="w-3/4 pl-2 py-2 dark:text-white dark:bg-transparent border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
             placeholder="HH:mm:ss"
             onChange={(e: any) => {
               handleDateInput(e);

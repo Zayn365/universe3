@@ -5,6 +5,7 @@ import { nftsImgs } from "@/contains/fakeData";
 import { useWeb3Helper } from "@/helpers/web3HelperFunctions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useThemeMode } from "@/hooks/useThemeMode";
 interface Props {
   open?: boolean;
   setOpen?: Dispatch<SetStateAction<boolean>>;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const ResellModal = (props: Props) => {
+  const {isDarkMode} = useThemeMode()
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
@@ -67,7 +69,7 @@ const ResellModal = (props: Props) => {
   return (
     <>
       <Modal
-        title="Re-Sell NFT"
+        title={<span style={{ color: isDarkMode ? "white" :"#111827" }}>Resell NFT</span>}
         open={open}
         onOk={handleOk}
         confirmLoading={confirmLoading}
@@ -78,30 +80,45 @@ const ResellModal = (props: Props) => {
           style: {
             backgroundColor: `${price ? "#0086c7" : "grey"}`,
             borderColor: `${price ? "#0086c7" : "grey"}`,
+            color: `${price ? "white" : "#bbb"}`,
           },
         }}
         cancelButtonProps={{
-          disabled: loading, // Disable cancel button when loading
+          disabled: loading,
+          style: { color: isDarkMode ? "gray" : "#111827", }
         }}
-      >
+        destroyOnClose={true}
+        closeIcon={false}
+        styles={{footer: { backgroundColor: isDarkMode ? "#111827" :"white" },header:{ backgroundColor: isDarkMode ? "#111827" :"white" },content:{ backgroundColor: isDarkMode ? "#111827" :"white"}}}>
+
         {/* @ts-ignore */}
         <Image
           //     @ts-ignore
           src={data ? data?.img : nftsImgs[0]}
           width={500}
-          className="rounded-md"
+          className="rounded-md !max-h-[300px] !min-h-[300px] object-cover object-center"
           height={500}
           alt="nftIMAGE"
         />
         <div className="flex mt-4 items-center justify-start mb-4">
-          <p className="w-1/4 text-[16px] text-bold text-gray-700">Price:</p>
+          <p className="w-1/4 text-[16px] text-bold dark:text-white text-gray-700">Price:</p>
           <input
             type="number"
             required
-            className="w-3/4 pl-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            className="w-3/4 pl-2 py-2 dark:text-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-transparent"
             placeholder="0.0001"
+            min={0}
             onChange={(e: any) => {
-              setPrice(e.target.value);
+              const value = e.target.value;
+              if (!isNaN(value) && parseFloat(value) > 0) {
+                setPrice(value);
+                return;
+              }
+              setPrice("")
+            }}
+            onInput={(e: any) => {
+              const input = e.target;
+              input.value = input.value.replace(/[^0-9.]/g, ""); // Allow only numbers and decimal points
             }}
           />
         </div>
